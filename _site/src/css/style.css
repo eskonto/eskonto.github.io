@@ -1,0 +1,29 @@
+body {   
+  margin-top: 60px; 
+}  
+
+#spinner {   
+  display: none; 
+}  
+
+textarea.input-xxlarge {   
+  width: 500px; 
+}  
+
+.well {   
+  padding: 10px; 
+}  
+
+.well h4 {   
+  margin-top: 0; 
+}
+
+.modal {
+  border: 8px solid rgba(128, 128, 128, .6);     
+  -webkit-background-clip: padding-box; /* for Safari */     
+  background-clip: padding-box; /* for IE9+, Firefox 4+, Opera, Chrome */
+}
+
+.modal-body {     
+  max-height: 800px; 
+}

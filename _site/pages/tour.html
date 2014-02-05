@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Eskonto - Bitcoin Escrow</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+  <link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/lib/css/alfaroa.css" rel="stylesheet" type="text/css" media="all" />
+  <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>  
+  <link href='http://fonts.googleapis.com/css?family=Condiment' rel='stylesheet' type='text/css'>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+  <script> 
+    jQuery(document).ready(function ($) {     
+      $('.nav-tabs').tab(); 
+    }); 
+  </script>
+</head>
+<body>
+
+  <!-- Start Header -->
+  <div id="header">
+		<div class="container">
+			<div class="row">
+				<p class="logo"><a href="/">Eskonto</a></p>
+				<ul class="navigation">
+					<li><a href="/">Home</a></li>
+          <!--<li><a href="/pages/tour.html">Tour</a></li>-->
+					<!--<li><a href="/pages/pricing.html">Pricing</a></li>
+					<li><a href="/pages/blog.html">Blog</a></li>
+					<li><a href="/pages/about.html">About</a></li>-->
+					<li><a href="/pages/contact.html">Contact</a></li>
+				</ul>
+			</div>
+  </div>
+</div>
+<!-- End Header -->
+<!-- Start Content -->
+<div id="content">    
+  <div class="container">
+  <h2 class="content"></h2>
+  <!-- Start Content -->
+	<div id="content">
+		<div class="container">
+			<div class="row">
+				<div class="page-header">
+				  <h1>Tour</h1>
+				</div>
+				<div class="tabbable"> <!-- Only required for left/right tabs -->
+				  <ul class="nav nav-tabs">
+					<li class="active"><a href="#tab1" data-toggle="tab"><strong>Create an Escrow Agreement</strong></a></li>
+					<li><a href="#tab2" data-toggle="tab"><strong>Respond to an Escrow Request</strong></a></li>
+				  </ul>
+				  <div class="tab-content">
+					<div class="tab-pane active" id="tab1">
+					  <div class="row">
+						<div class="span4">
+							<h3>Create the Contract</h3>
+							<p><img src="http://placehold.it/400x100" alt="Placedholder"></p>
+							<p>Enter the details of the agreement into Eskonto. You should be careful to enter all the deatils because if their is a dispute we will use these details as part of dispute resolution.</p>
+              <p>When you create an escrow agreement with Eskonto we generate two cryptographic invite codes. One for you and one for the buyer/seller.</p>
+              <p>You never to see the other persons invite code, we store that safely on our servers.</p>
+						</div>
+						<div class="span4">
+							<h3>Send the Contract</h3>
+							<p><img src="http://placehold.it/400x100" alt="Placedholder"></p>
+              <p>Now, whoever is the Payee in the transaction generates a payment invitation with Eskonto using our code that runs in the browser.</p>
+              <p>When the other party receives the inviation they can accept it and a Bitcoin address will be generated for the escrow.</p>
+              <p>We never see the payment invitaion code (you have to email it yourself) and therefore as an escrow provider we are unable to access the funds without help from the payer or the payee.</p>
+						</div>
+						<div class="span4">
+							<h3>Wait for Funds</h3>
+							<p><img src="http://placehold.it/400x100" alt="Placedholder"></p>
+              <p>Once funds have been received buy the bitcoin address Eskonto allows the buyer to release the funds or the seller to refund the Bitcoins. Only if there is a dispute between the parties do we get involved. At this pojnt we can use our knowledge of the original 2 invite codes to side with either the buyer or the seller.</p>
+              <p></p>
+              <p></p>
+						</div>
+					  </div>
+					</div>
+					<div class="tab-pane" id="tab2">
+						<div class="row">
+						<div class="span4">
+							<h3>Create the Contract</h3>
+							<p><img src="http://placehold.it/400x100" alt="Placedholder"></p>
+							<p>Enter the details of the agreement into Eskonto. You should be careful to enter all the deatils because if their is a dispute we will use these details as part of dispute resolution.</p>
+              <p>When you create an escrow agreement with Eskonto we generate two cryptographic invite codes. One for you and one for the buyer/seller.</p>
+              <p>You never to see the other persons invite code, we store that safely on our servers.</p>
+						</div>
+						<div class="span4">
+							<h3>Send the Contract</h3>
+							<p><img src="http://placehold.it/400x100" alt="Placedholder"></p>
+              <p>Now, whoever is the Payee in the transaction generates a payment invitation with Eskonto using our code that runs in the browser.</p>
+              <p>When the other party receives the inviation they can accept it and a Bitcoin address will be generated for the escrow.</p>
+              <p>We never see the payment invitaion code (you have to email it yourself) and therefore as an escrow provider we are unable to access the funds without help from the payer or the payee.</p>
+						</div>
+						<div class="span4">
+							<h3>Wait for Funds</h3>
+							<p><img src="http://placehold.it/400x100" alt="Placedholder"></p>
+              <p>Once funds have been received buy the bitcoin address Eskonto allows the buyer to release the funds or the seller to refund the Bitcoins. Only if there is a dispute between the parties do we get involved. At this pojnt we can use our knowledge of the original 2 invite codes to side with either the buyer or the seller.</p>
+              <p></p>
+              <p></p>
+						</div>
+					  </div>
+					</div>
+				  </div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Content -->
+
+</div>
+</div>
+<!-- End Content -->
+    
+	<!-- Start Footer -->
+	<div id="footer">
+		<div class="container">
+			<div class="row">
+				<!--<div class="span2">
+					<h3>About</h3>
+					<ul>
+						<li><a href="/">About Eskonto</a></li>
+						<li><a href="/">Jobs</a></li>
+						<li><a href="/">Press Resources</a></li>
+						<li><a href="/">Press Releases</a></li>
+					</ul>
+				</div>
+				<div class="span2">
+					<h3>Features</h3>
+					<ul>
+						<li><a href="/">Twitter Bootstrap</a></li>
+						<li><a href="/">HTML5 Markup</a></li>
+						<li><a href="/">Google Web Fonts</a></li>
+					</ul>
+				</div>-->
+				<div class="span2">
+					<h3>Legal Info</h3>
+					<ul>
+						<li><a href="/2013/07/31/legal.html">Terms of Use</a></li>
+						<li><a href="/2013/07/31/privacy.html">Privacy Policy</a></li>
+						<li><a href="/2013/07/31/copyright.html">Copyright Policy</a></li>
+					</ul>
+				</div>
+				<div class="span2">
+					<h3>Contact</h3>
+					<ul>
+						<li><a href="/pages/contact.html">Contact Eskonto</a></li>
+					</ul>
+				</div>
+				<div class="span4">
+					<h3>Support</h3>
+					<p>We're available 9am to 5pm Main land Europe time Monday to Friday. We do provide out of hours support but we may not get back to you as quickly.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Footer -->
+
+</body>
+</html>

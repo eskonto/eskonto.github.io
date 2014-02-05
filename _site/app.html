@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Eskonto - Bitcoin Escrow</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+  <link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>  
+  <link href='http://fonts.googleapis.com/css?family=Condiment' rel='stylesheet' type='text/css'>
+  <link href='src/css/style.css' rel='stylesheet' type='text/css'>
+</head>
+<body class="default-layout">
+  <header class="navbar navbar-fixed-top" id="main-navbar">
+    <div class="navbar-inner">
+      <div class="container">
+        <a href="/" class="brand">Eskonto</a>
+        <ul class="nav pull-right">
+          <li id="login">
+            <a href="#login">Login</a>
+          </li>
+          <li id="signup">
+            <a href="#signup">Sign Up</a>
+          </li>
+          <li id="logout" style="display: none;">
+            <a href="#logout">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </header>
+  
+  <section class="container">
+    <section class="row-fluid" id="content">
+      <p>Please <a href="/signup">signup</a> to create an escrow agreement</p>
+    </section>
+  </section>
+
+  <div class="navbar navbar-fixed-bottom">
+    <p><center><small>Eskonto is copyright Eskonto LLC.</small></center></p>
+      <p><center><small>All rights reserved.</small></center></p>
+  </div>
+
+  <script type="text/x-handlebars-template" id="login_tmpl">
+    {{#if escrow}}
+      <div class="alert alert-info">
+        <p>Please login to view escrow ID: {{escrow}}</p>
+      </div>
+    {{/if}}
+    <form class="form-horizontal">
+      <fieldset>
+      <div class="control-group">
+        <label for="user_email" class="control-label">Email</label>
+        <div class="controls">
+          <input type="text" id="user_email" name="user[email]" />
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="user_password" class="control-label">Password</label>
+        <div class="controls">
+          <input type="password" id="user_password" name="user[password]" />
+        </div>
+      </div>  
+
+      <div class="form-actions">
+        <input name="commit" class="btn btn-primary" type="submit" value="Sign in" />
+        <img src="img/spinner.gif" id="spinner" />
+      </div>
+    </form>
+  </script>
+
+  <script type="text/x-handlebars-template" id="sign_up_tmpl">
+    {{#if escrow}}
+      <div class="alert alert-info">
+        <p>Please sign up to view escrow ID: {{escrow}}</p>
+      </div>
+    {{/if}}
+    <form class="form-horizontal">
+      <fieldset>
+      <div class="control-group">
+        <label for="user_email" class="control-label">Email</label>
+        <div class="controls">
+          <input type="text" id="user_email" name="user[email]" />
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="user_password" class="control-label">Password</label>
+        <div class="controls">
+          <input type="password" id="user_password" name="user[password]" />
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="user_password_confirmation" class="control-label">Password Confirmation</label>
+        <div class="controls">
+          <input type="password" id="user_password_confirmation" name="user[password_confirmation]" />
+        </div>
+      </div>  
+
+      <div class="form-actions">
+        <input name="commit" class="btn btn-primary" type="submit" value="Sign up" />
+        <img src="img/spinner.gif" id="spinner" />
+      </div>
+    </form>
+  </script>
+
+  <script type="text/x-handlebars-template" id="escrows_tmpl">
+    <h3 class="box-header">Your Escrows</h3>
+    <div class="box">
+    <a class="btn btn-primary" href="/escrows/new">New Escrow</a>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Created</th>
+          <th>Description</th>
+          <th>Amount</th>
+          <th>Address</th>
+          <th>With</th>
+          <th>Status</th>
+      </thead>
+      <tbody>
+        {{#each escrows}}
+          <tr>
+            <td>
+              {{dateFormat created_at format="DD/MM/YY hh:mm"}}
+            </td>
+            <td>
+              <a href="/escrows/{{uuid}}">{{formatDesc description}}</a>
+            </td>
+            <td>
+              {{amount}} BTC
+            </td>
+            <td>
+              {{address}}
+            </td>
+            <td>
+              {{#if is_payer}}
+                {{payee.email}}
+              {{else}}
+                {{payer.email}}
+              {{/if}}
+            </td>
+            <td>
+              {{status}}
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    <div>
+  </script>
+
+  <script type="text/x-handlebars-template" id="create_escrow_tmpl">
+    <h3 class="box-header">Create an Escrow agreement</h3>
+    <div class="box">
+      <div class="alert alert-warning">
+        <p>It is important to agree the terms of the Escrow with the other party before creating the escrow.</p>
+        <p>Once an escrow is created the agreement cannot be changed. If there is a dispute we will use the 
+        details of the agreement to resolve any issues.</p>
+    </div>
+    <form id="create" class="form-horizontal">
+      <fieldset>
+
+        <div class="control-group">
+          <label class="control-label">I would like to:</label>
+          <div class="controls">
+            <label for="payer">
+              <input type="radio" id="payer" class="radio inline" name="escrow[role]" value="payer" /> 
+              Send Bitcoins in return for an item or service.
+            </label>
+
+            <label for="payee">
+              <input type="radio" id="payee" class="radio inline" name="escrow[role]" value="payee" /> 
+              Receive Bitcoins in return for an item or service.
+            </label>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label for="description" class="control-label">Details of the Agreement</label>
+          <div class="controls">
+            <textarea id="description" name="escrow[description]"></textarea>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label for="amount" class="control-label">Amount in BTC</label>
+          <div class="controls">
+            <input type="text" id="amount" name="escrow[amount]" />
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="form-actions">
+        <input type="submit" class="btn btn-primary" value="I'm ready, let's create the email." />
+        <img src="img/spinner.gif" id="spinner" />
+      </div>
+    </form>
+    <div>
+
+
+    <div id="escrow-modal" class="modal hide" data-backdrop="static">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>You need to send an email to the other party.</h3>
+      </div>
+      <div class="modal-body">
+        <h5>Please send the following text to the person you wish join you in this escrow agreement</h5>
+
+        <div class="alert alert-warning">
+          <strong>Make a note of the payment verification code as you will need this to collect the funds</strong>
+        </div>
+
+        <textarea class="input-xxlarge" rows="14" id="escrow-email"></textarea>
+      </div>
+      <div class="modal-footer">
+        <a href="/escrows" class="btn btn-primary">I confirm that I have sent the email.</a>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/x-handlebars-template" id="escrow_tmpl">
+
+    <ol class="breadcrumb">
+      <li><a href="/escrows">Your Escrows</a></li>
+      <li class="active">Escrow : {{id}}</li>
+    </ol>
+
+    <h4>Escrow ID : {{id}}</h4>
+
+    <div class="box">
+
+          {{#if verify}}
+            {{#unless is_originator}}
+              <p>Welcome to eskonto escrow verification.</p>
+              {{#if is_payer}}
+                <p>You have been invited into an escrow by <strong>{{payee.email}}</strong> 
+                for <strong>{{amount}}</strong> BTC.</p>
+              {{else}}
+                <p>You have been invited into an escrow by <strong>{{payer.email}}</strong> 
+                for <strong>{{amount}}</strong> BTC.</p>
+              {{/if}}
+              <p>To accept the escrow we need the verification code you received by email. 
+              This code is used to create the bitcoin address where funds will be sent.</p>
+              <p>When you have your code ready click the button below.</p>
+              <p><a href="/escrows/{{uuid}}/verify" class="btn btn-primary">Verify</a></p>
+            {{/unless}}
+          {{/if}}
+
+          {{#if accepted}}
+            {{#if is_payer}}
+              <div class="alert">
+                <p><strong>When you are happy that this transaction is complete you can release the Bitcoins to the seller.</strong></p>
+                <p><a href="/escrows/{{uuid}}/release" id="release" class="btn btn-primary">Release Funds</a></p>
+              </div>
+            {{/if}}
+
+            {{#if is_payee}}
+              <div class="alert">
+                <p><strong>Check that you have received the payment from: {{payer.email}}</strong></p>
+                <p>If the agreed balance and the balance at the bitcoin escrow address match,
+                then the escrow account is succesfully funded.</p>
+              </div>
+            {{/if}}
+          {{/if}}
+          
+          {{#if released}}
+            {{#if is_payer}}
+              <div class="alert">
+              <p>The funds have now been made available to {{payee.email}}</p>
+              </div>
+            {{/if}}
+
+            {{#if is_payee}}
+            <div class="alert">
+              <p>The funds have been released.</p>
+              <a href="/escrows/{{uuid}}/redeem" class="btn btn-primary">Redeem Funds</a>
+              </div>
+            {{/if}}
+          {{/if}}
+
+          {{#if new_escrow}}
+          <h4>Waiting</h4>
+          {{/if}}
+
+    </div>
+
+    <table class="table table-striped">
+      <tbody>
+        <tr>
+          <td>Escrow With</td>
+          <td>
+            {{#if accepted}}
+              {{#if is_payer}}
+                {{payee.email}}
+              {{else}}
+                {{payer.email}}
+              {{/if}}
+            {{/if}}
+          </td>
+        </tr>
+        <tr>
+          <td>Date</td>
+          <td>
+            {{dateFormat created_at format="DD/MM/YY hh:mm"}}
+          </td>
+        </tr>
+        <tr>
+          <td>Description</td>
+          <td>
+            <pre>{{description}}</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>Agreed Amount to Escrow</td>
+          <td>
+            {{amount}}
+          </td>
+        </tr>
+        <tr>
+          <td>Bitcoin Address for this Escrow</td>
+          <td>
+            {{address}}
+          </td>
+        </tr>
+        <tr>
+          <td>Balance at the Escrow Address</td>
+          <td>
+            {{balance}}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </script>
+
+  <script type="text/x-handlebars-template" id="verify_escrow_tmpl">
+    <h3 class="box-header">Enter your Payment Invitation to verify the Escrow</h3>
+    <div class="box">
+
+    <form id="verify" class="form-horizontal" data-role="{{#if is_payee}}payee{{else}}payer{{/if}}">
+      <fieldset>
+        <div class="control-group">
+          <label class="control-label">Payment Invitation</label>
+          <div class="controls">
+            <input type="text" id="verify-code2" class="input-xlarge" />
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="form-actions">
+        <input type="submit" class="btn btn-primary" value="Verify">
+      </div>
+    </form>
+
+    <div id="verify-modal" class="modal hide fade" data-backdrop="static">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Verification Result</h3>
+      </div>
+      <div class="modal-body">
+        <p id="verification"> ... not yet verified ... </p>
+      </div>
+      <div class="modal-footer">
+        <a href="javascript:void(0)" class="btn btn-primary">Close</a>
+      </div>
+    </div>
+    </div>
+  </script>
+
+  <script type="text/x-handlebars-template" id="redeem_escrow_tmpl">
+    <form id="redeem" class="form-horizontal">
+      <fieldset>
+        <legend>Please enter your payment invitation to extract the private key</legend>
+
+        <div class="control-group">
+          <label class="control-label">Invite Code</label>
+          <div class="controls">
+            <input type="text" id="einvp" name="escrow[einvp]" class="input-xxlarge" />
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <div class="control-group">
+          <label class="control-label">Address</label>
+          <div class="controls">
+            <input type="text" id="redeem-address" name="escrow[redeem-address]" class="input-xxlarge" />
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">Private Key</label>
+
+          <div class="controls">
+            <input type="text" id="redeem-wif" name="escrow[redeem-wif]" class="input-xxlarge" />
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="form-actions">
+        <input type="submit" class="btn btn-primary" value="Redeem" />
+        <a href="/escrows" class="btn">Back</a>
+      </div>
+    </form>
+  </script>
+
+  <script type="text/javascript" src="lib/js/jquery-2.0.0.min.js"></script>
+  <script type="text/javascript" src="lib/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="lib/js/underscore-min.js"></script>
+  <script type="text/javascript" src="lib/js/backbone-min.js"></script>
+  <script type="text/javascript" src="lib/js/backbone_filters.js"></script>
+  <script type="text/javascript" src="lib/js/moment.min.js"></script>
+  <script type="text/javascript" src="lib/js/jquery.cookie.js"></script>
+  <script type="text/javascript" src="lib/js/handlebars.js"></script>
+  <script type="text/javascript" src="lib/js/elliptic.curve.js"></script>
+  <script type="text/javascript" src="lib/js/crypto.js"></script>
+  <script type="text/javascript" src="lib/js/secure.random.js"></script>
+  <script type="text/javascript" src="lib/js/bigint.js"></script>
+  <script type="text/javascript" src="lib/js/bitcoin.base58.js"></script>
+  <script type="text/javascript" src="lib/js/bitcoin.address.js"></script>
+  <script type="text/javascript" src="lib/js/bitcoin.ecdsa.js"></script>
+  <script type="text/javascript" src="lib/js/bitcoin.escrow.js"></script>
+  
+  <script type="text/javascript" src="src/js/helpers.js"></script>           
+  <script type="text/javascript" src="src/js/app.js"></script>            
+  <script type="text/javascript" src="src/js/models/escrow.js"></script>            
+  <script type="text/javascript" src="src/js/collections/escrows.js"></script>
+
+  <script type="text/javascript" src="src/js/views/escrow_base_view.js"></script>
+  <script type="text/javascript" src="src/js/views/create_escrow.js"></script>
+  <script type="text/javascript" src="src/js/views/escrow_base_view.js"></script>
+  <script type="text/javascript" src="src/js/views/escrows_list.js"></script>
+  <script type="text/javascript" src="src/js/views/login.js"></script>
+  <script type="text/javascript" src="src/js/views/redeem_escrow.js"></script>
+  <script type="text/javascript" src="src/js/views/show_escrow.js"></script>
+  <script type="text/javascript" src="src/js/views/sign_up.js"></script>
+  <script type="text/javascript" src="src/js/views/verify_escrow.js"></script>                      
+  <script type="text/javascript" src="src/js/routes.js"></script>
+
+  <script>
+    App.initialize();
+
+    $(function($) {
+      return $(document).delegate("a", "click", function(evt) {
+        var href, protocol;
+        if ($(this).hasClass("js")) {
+          return;
+        }
+        href = $(this).attr("href");
+        protocol = this.protocol + "//";
+        if (href.slice(protocol.length) !== protocol) {
+          evt.preventDefault();
+          return App.Router.navigate(href, {
+            trigger: true
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
